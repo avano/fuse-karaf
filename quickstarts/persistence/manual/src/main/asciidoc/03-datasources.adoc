@@ -1,0 +1,89 @@
+= Datasource configuration
+
+There are two main methods of exposing JDBC datasource in {f7} environment and both of them are used to publish
+`javax.sql.(XA)DataSource` OSGi services:
+
+* publishing datasource using `jdbc:ds-create` Karaf console command
+
+* publishing datasource using OSGi methods like Blueprint, OSGi Declarative Services (SCR) or even simple
+`BundleContext.registerService()` API call. This method requires dedicated OSGi bundle that contains the code and/or
+metadata.
+
+== Using console commands
+
+[listing,options="nowrap"]
+----
+karaf@root()> feature:install -v jdbc
+Adding features: jdbc/[4.2.0.fuse-000199,4.2.0.fuse-000199]
+Changes to perform:
+  Region: root
+    Bundles to install:
+      mvn:org.ops4j.pax.jdbc/pax-jdbc/1.2.0
+      mvn:org.ops4j.pax.jdbc/pax-jdbc-config/1.2.0
+Installing bundles:
+  mvn:org.ops4j.pax.jdbc/pax-jdbc/1.2.0
+  mvn:org.ops4j.pax.jdbc/pax-jdbc-config/1.2.0
+Starting bundles:
+  org.ops4j.pax.jdbc/1.2.0
+  org.ops4j.pax.jdbc.config/1.2.0
+Done.
+Changes to perform:
+  Region: root
+    Bundles to install:
+      mvn:org.apache.karaf.jdbc/org.apache.karaf.jdbc.core/4.2.0.fuse-000199
+Installing bundles:
+  mvn:org.apache.karaf.jdbc/org.apache.karaf.jdbc.core/4.2.0.fuse-000199
+Starting bundles:
+  org.apache.karaf.jdbc.core/4.2.0.fuse-000199
+Done.
+
+karaf@root()> jdbc:ds-factories
+Name │ Class │ Version
+─────┼───────┼────────
+
+karaf@root()> install -s mvn:org.mariadb.jdbc/mariadb-java-client/2.2.3
+Bundle ID: 236
+
+karaf@root()> jdbc:ds-factories
+Name             │ Class                   │ Version
+─────────────────┼─────────────────────────┼────────
+org.mariadb.jdbc │ org.mariadb.jdbc.Driver │ 2.2.3
+
+karaf@root()> feature:install pax-jdbc-mariadb
+karaf@root()> jdbc:ds-create -dc org.mariadb.jdbc.Driver -dt XADataSource -u fuse -p fuse -url jdbc:mariadb://localhost:3306/reportdb fuse-mariadb-server
+karaf@root()> jdbc:ds-list
+Name                │ Product │ Version                            │ URL                                    │ Status
+────────────────────┼─────────┼────────────────────────────────────┼────────────────────────────────────────┼───────
+fuse-mariadb-server │ MySQL   │ 10.3.5-MariaDB-10.3.5+maria~jessie │ jdbc:mariadb://localhost:3306/reportdb │ OK
+fuse-mariadb-server │ MySQL   │ 10.3.5-MariaDB-10.3.5+maria~jessie │ jdbc:mariadb://localhost:3306/reportdb │ OK
+
+karaf@root()> jdbc:query fuse-mariadb-server 'select * from reportdb.incident'
+date                  │ summary    │ name   │ details                       │ id │ email
+──────────────────────┼────────────┼────────┼───────────────────────────────┼────┼─────────────────
+2018-02-20 08:00:00.0 │ Incident 1 │ User 1 │ This is a report incident 001 │ 1  │ user1@redhat.com
+2018-02-20 08:10:00.0 │ Incident 2 │ User 2 │ This is a report incident 002 │ 2  │ user2@redhat.com
+2018-02-20 08:20:00.0 │ Incident 3 │ User 3 │ This is a report incident 003 │ 3  │ user3@redhat.com
+2018-02-20 08:30:00.0 │ Incident 4 │ User 4 │ This is a report incident 004 │ 4  │ user4@redhat.com
+----
+
+== Deploying datasources as artifacts
+
+[graphviz, dot-example, svg]
+....
+digraph G {
+ graph [bgcolor="#f9f9f9" rotation="90.0" bb="1,1,1,1"]
+ node [width=0.5 shape=egg]
+ a -> {c d} [shape=box]
+ a [fillcolor=yellow style=dotted]
+ b -> {c d}
+}
+....
+
+[ditaa, background="f9f9f9", round-corners="true"]
+....
++-------------+     +-----------+
+| Asciidoctor |=--->|Asciidoctor|
++-------------+     |Asciidoctor|
+|  Diagram    |     |cRED       |
++-------------+     +-----------+
+....

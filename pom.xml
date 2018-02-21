@@ -170,13 +170,15 @@
         <version.org.wildfly.common>1.2.0.Beta3</version.org.wildfly.common>
         <version.org.wildfly.security.elytron>1.1.0.Beta22</version.org.wildfly.security.elytron>
 
-        <!-- versions of Maven plugins -->
+        <!-- versions of Maven plugins (and their important dependencies) -->
+        <version.plugin.asciidoctor-maven-plugin>1.5.6</version.plugin.asciidoctor-maven-plugin>
         <version.plugin.felix.maven-scr-plugin>1.26.0</version.plugin.felix.maven-scr-plugin>
         <version.plugin.felix.maven-bundle-plugin>3.5.0</version.plugin.felix.maven-bundle-plugin>
         <version.plugin.mycila.license-maven-plugin>3.0</version.plugin.mycila.license-maven-plugin>
         <version.plugin.mojo.build-helper-maven-plugin>3.0.0</version.plugin.mojo.build-helper-maven-plugin>
         <version.plugin.mojo.properties-maven-plugin>1.0.0</version.plugin.mojo.properties-maven-plugin>
         <version.plugin.servicemix.depends-maven-plugin>1.4.0</version.plugin.servicemix.depends-maven-plugin>
+        <!-- Plugins from org.apache.maven.plugins -->
         <version.plugin.maven-antrun-plugin>1.8</version.plugin.maven-antrun-plugin>
         <version.plugin.maven-assembly-plugin>3.1.0</version.plugin.maven-assembly-plugin>
         <version.plugin.maven-checkstyle-plugin>2.17</version.plugin.maven-checkstyle-plugin>
@@ -261,7 +263,7 @@
             </releases>
             <snapshots>
                 <enabled>true</enabled>
-                <updatePolicy>daily</updatePolicy>
+                <updatePolicy>never</updatePolicy>
             </snapshots>
         </repository>
         <repository>
@@ -599,6 +601,21 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>apache-salesforce</artifactId>
+                <version>${version.org.apache.camel}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>apache-blueprint</artifactId>
+                <version>${version.org.apache.camel}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>apache-jdbc</artifactId>
+                <version>${version.org.apache.camel}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>apache-sql</artifactId>
                 <version>${version.org.apache.camel}</version>
             </dependency>
 
@@ -1152,6 +1169,12 @@
                     <version>${version.plugin.mycila.license-maven-plugin}</version>
                 </plugin>
 
+                <plugin>
+                    <groupId>org.asciidoctor</groupId>
+                    <artifactId>asciidoctor-maven-plugin</artifactId>
+                    <version>${version.plugin.asciidoctor-maven-plugin}</version>
+                </plugin>
+
             </plugins>
         </pluginManagement>
 
@@ -1300,6 +1323,7 @@
                                 <include>**/*.xml</include>
                                 <include>**/*.wsdl</include>
                                 <include>**/*.cfg</include>
+                                <include>**/*.sql</include>
                                 <include>**/*.properties</include>
                                 <include>**/bin/fuse*</include>
                             </includes>
